@@ -12,16 +12,19 @@ namespace monolith
         {
             this.o = o;
         }
-        public async Task Run() {
+        public async Task Run()
+        {
             // The port number(5001) must match the port of the gRPC server.
-            try {
+            try
+            {
                 Console.WriteLine($"https://{ o.Host }:${ o.Port }");
-                var channelOptions = new GrpcChannelOptions {
+                var channelOptions = new GrpcChannelOptions
+                {
                     // preparing for auth-stuff
                     // Credentials = Grpc.Core.ChannelCredentials.Insecure, // Grpc.Core.ChannelCredentials.Create(Grpc.Core.ChannelCredentials.Insecure, Grpc.Core.CallCredentials.FromInterceptor())
                 };
                 using var channel = GrpcChannel.ForAddress($"https://{ o.Host }:{ o.Port }", channelOptions);
-                
+
                 var nodeRegistryClient = new NodeRegistry.NodeRegistryClient(channel);
                 var fileRegistryClient = new FileRegistry.FileRegistryClient(channel);
                 { // Auth
@@ -30,32 +33,44 @@ namespace monolith
                     Console.WriteLine($"Authentication as { o.ClientID }: " + reply.Status);
                 }
                 bool gracefulDisconnect = false;
-                do { // Main Loop
-                    try {
+                do
+                { // Main Loop
+                    try
+                    {
                         var command = Console.ReadLine();
                         var args = command.Split(' ');
 
-                        switch (command.IndexOf(' ') > -1 ? args[0] : command) {
+                        switch (command.IndexOf(' ') > -1 ? args[0] : command)
+                        {
                             case "exit": gracefulDisconnect = true; break;
-                            case "register": if (args.Length == 2) {
-                                var fileName = args[1];
-                                var reply = await fileRegistryClient.RegisterAsync(
-                                    new FileRegisterRequest { Filename = fileName });
-                            } break;
-                            case "browse": {
-                                var reply = await fileRegistryClient.BrowseAsync(
-                                    new FileBrowseRequest { });
-                                foreach(var fileName in reply.Filenames)
-                                    Console.WriteLine(fileName);
-                            } break;
+                            case "register":
+                                if (args.Length == 2)
+                                {
+                                    var fileName = args[1];
+                                    var reply = await fileRegistryClient.RegisterAsync(
+                                        new FileRegisterRequest { Filename = fileName });
+                                }
+                                break;
+                            case "browse":
+                                {
+                                    var reply = await fileRegistryClient.BrowseAsync(
+                                        new FileBrowseRequest { });
+                                    foreach (var fileName in reply.Files)
+                                        Console.WriteLine($"{ fileName.Id } { fileName.Filename }");
+                                }
+                                break;
                         }
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e)
+                    {
                         Console.WriteLine(e);
                     }
                 } while (!gracefulDisconnect);
 
                 Console.WriteLine("Press any key to exit...");
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Console.WriteLine(e.ToString());
             }
         }

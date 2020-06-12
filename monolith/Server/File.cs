@@ -7,11 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace monolith.Server {
     public class File {
+        public Guid Id { get; set; }
         public string Filename { get; set; }
-
-        public File(string Filename) { 
-            this.Filename = Filename;
-        }
-
     }
 }

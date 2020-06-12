@@ -4,17 +4,24 @@ option csharp_namespace = "monolith";
 
 package datahoarderfs;
 
+
 service FileRegistry {
   rpc Register (FileRegisterRequest) returns (FileRegisterReply);
   rpc Browse (FileBrowseRequest) returns (FileBrowseReply);
   rpc Get (FileGetRequest) returns (FileGetReply);
 }
 
+
+message File {
+  string Id = 1;
+  string Filename = 2;
+}
+
 message FileRegisterRequest {
-  string filename = 1;
+  string Filename = 1;
 }
 message FileRegisterReply {
-  bool success = 1;
+  string Id = 1;
 }
 
 
@@ -22,13 +29,13 @@ message FileBrowseRequest {
   // empty
 }
 message FileBrowseReply {
-  repeated string filenames = 1;
+  repeated File Files = 1;
 }
 
 
 message FileGetRequest {
-  string filename = 1;
+  string Filename = 1;
 }
 message FileGetReply {
-  repeated string where2Get = 1;
+  repeated string Where2Get = 1;
 }
