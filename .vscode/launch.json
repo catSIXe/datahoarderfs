@@ -5,12 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (web)",
+            "name": ".NET Core Launch (Tracker)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/monolith/bin/Debug/netcoreapp3.1/monolith.dll",
-            "args": [],
+            "args": ["-m", "tracker"],
             "cwd": "${workspaceFolder}/monolith",
             "stopAtEntry": false,
             "serverReadyAction": {
