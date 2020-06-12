@@ -9,16 +9,6 @@ namespace monolith.Server {
     public class FileRegistry {
         public Dictionary<string, File> registry;
 
-        private static FileRegistry instance = null;
-        private static readonly object padlock = new object();
-        public static FileRegistry Instance {
-            get {
-                lock (padlock) {
-                    if (instance == null) instance = new FileRegistry();
-                    return instance;
-                }
-            }
-        }
         public FileRegistry() {
             Console.WriteLine("[FileRegistry] has been initialized");
             this.registry = new Dictionary<string, File>();

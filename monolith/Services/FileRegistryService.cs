@@ -9,14 +9,23 @@ namespace monolith
 {
     public class FileRegistryService : FileRegistry.FileRegistryBase
     {
-        private readonly ILogger<FileRegistryService> _logger;
-        public FileRegistryService(ILogger<FileRegistryService> logger)
-        {
+        private ILogger<FileRegistryService> _logger { get; }
+
+        private monolith.Server.FileRegistry fileRegistry { get; }
+        private monolith.Server.NodeRegistry nodeRegistry { get; }
+
+        public FileRegistryService(
+            monolith.Server.FileRegistry fileRegistry, 
+            monolith.Server.NodeRegistry nodeRegistry, 
+            ILogger<FileRegistryService> logger
+        ) {
             _logger = logger;
+            this.fileRegistry = fileRegistry;
+            this.nodeRegistry = nodeRegistry;
         }
 
         public async override Task<FileRegisterReply> Register(FileRegisterRequest request, ServerCallContext context) {
-            await Server.FileRegistry.Instance.Register(new Server.File(request.Filename));
+            await this.fileRegistry.Register(new Server.File(request.Filename));
 
             return new FileRegisterReply {
                 Success = true
@@ -25,7 +34,7 @@ namespace monolith
         public async override Task<FileBrowseReply> Browse(FileBrowseRequest request, ServerCallContext context) {
             // context.GetHttpContext().User
             var reply = new FileBrowseReply {};
-            Server.File[] res = await Server.FileRegistry.Instance.Browse();
+            Server.File[] res = await this.fileRegistry.Browse();
 
             foreach(var file in res) 
                 reply.Filenames.Add(file.Filename);

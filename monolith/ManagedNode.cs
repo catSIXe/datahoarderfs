@@ -17,6 +17,7 @@ namespace monolith
             try {
                 Console.WriteLine($"https://{ o.Host }:${ o.Port }");
                 var channelOptions = new GrpcChannelOptions {
+                    // preparing for auth-stuff
                     // Credentials = Grpc.Core.ChannelCredentials.Insecure, // Grpc.Core.ChannelCredentials.Create(Grpc.Core.ChannelCredentials.Insecure, Grpc.Core.CallCredentials.FromInterceptor())
                 };
                 using var channel = GrpcChannel.ForAddress($"https://{ o.Host }:{ o.Port }", channelOptions);
@@ -47,7 +48,6 @@ namespace monolith
                                 foreach(var fileName in reply.Filenames)
                                     Console.WriteLine(fileName);
                             } break;
-
                         }
                     } catch (Exception e) {
                         Console.WriteLine(e);
