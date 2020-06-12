@@ -6,6 +6,7 @@ package datahoarderfs;
 
 service NodeRegistry {
   rpc Authenticate (NodeAuthenticationRequest) returns (NodeAuthenticationReply);
+  rpc Test (NodeTestRequest) returns (NodeTestReply);
   rpc UpdateStream (NodeUpdateStreamRequest) returns (NodeUpdateStreamReply);
 }
 
@@ -16,6 +17,14 @@ message NodeAuthenticationRequest {
 message NodeAuthenticationReply {
   bool status = 1;
   int32 keepAliveInterval = 2;
+}
+
+
+message NodeTestRequest {
+  string identifier = 1;
+}
+message NodeTestReply {
+  bool status = 1;
 }
 
 

@@ -1,6 +1,8 @@
-using System;
-using System.Threading.Tasks;
 using Grpc.Net.Client;
+
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace monolith
 {
@@ -22,6 +24,8 @@ namespace monolith
                 {
                     // preparing for auth-stuff
                     // Credentials = Grpc.Core.ChannelCredentials.Insecure, // Grpc.Core.ChannelCredentials.Create(Grpc.Core.ChannelCredentials.Insecure, Grpc.Core.CallCredentials.FromInterceptor())
+
+                    // HttpHandler = new ApiKeyHandler("MY_KEY"),
                 };
                 using var channel = GrpcChannel.ForAddress($"https://{ o.Host }:{ o.Port }", channelOptions);
 
@@ -31,6 +35,14 @@ namespace monolith
                     var reply = await nodeRegistryClient.AuthenticateAsync(
                                 new NodeAuthenticationRequest { Identifier = o.ClientID });
                     Console.WriteLine($"Authentication as { o.ClientID }: " + reply.Status);
+                }
+                {
+                    var reply = await nodeRegistryClient.TestAsync(new NodeTestRequest { Identifier = o.ClientID });
+                    Console.WriteLine($"Authentication Test as { o.ClientID }: " + reply.Status);
+                    if (reply.Status == false) {
+                        Console.WriteLine("Something fucked up wrongly");
+                        return;
+                    }
                 }
                 bool gracefulDisconnect = false;
                 do
@@ -49,14 +61,25 @@ namespace monolith
                                     var fileName = args[1];
                                     var reply = await fileRegistryClient.RegisterAsync(
                                         new FileRegisterRequest { Filename = fileName });
+                                    Console.WriteLine($"{ reply.Id }");
                                 }
                                 break;
                             case "browse":
                                 {
                                     var reply = await fileRegistryClient.BrowseAsync(
                                         new FileBrowseRequest { });
-                                    foreach (var fileName in reply.Files)
-                                        Console.WriteLine($"{ fileName.Id } { fileName.Filename }");
+                                    foreach (var file in reply.Files)
+                                        Console.WriteLine(file);
+                                }
+                                break;
+                            case "get":
+                                if (args.Length == 2)
+                                {
+                                    var id = args[1];
+                                    var reply = await fileRegistryClient.GetAsync(
+                                        new FileGetRequest { Id = id });
+                                    foreach (var fileName in reply.Where2Get)
+                                        Console.WriteLine($"{ fileName }");
                                 }
                                 break;
                         }
@@ -69,8 +92,7 @@ namespace monolith
 
                 Console.WriteLine("Press any key to exit...");
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
         }

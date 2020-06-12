@@ -23,9 +23,10 @@ namespace monolith.Server
         {
             var id = Guid.NewGuid();
             using var conn = await postgresProvider.NewConnection();
-            await conn.ExecuteAsync("INSERT INTO files(id, filename) VALUES (@Id, @filename) ON CONFLICT(filename) DO NOTHING", new {
+            await conn.ExecuteAsync("INSERT INTO files(id, filename, owner) VALUES (@Id, @Filename, @Owner) ON CONFLICT(filename) DO NOTHING", new {
                 Id = id,
-                filename = file.Filename,
+                Filename = file.Filename,
+                Owner = file.Owner
             });
             // this.registry.Add(file.Filename, file);
             return id;

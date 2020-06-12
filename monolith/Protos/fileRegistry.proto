@@ -15,6 +15,7 @@ service FileRegistry {
 message File {
   string Id = 1;
   string Filename = 2;
+  string Owner = 3;
 }
 
 message FileRegisterRequest {
@@ -34,7 +35,7 @@ message FileBrowseReply {
 
 
 message FileGetRequest {
-  string Filename = 1;
+  string Id = 1;
 }
 message FileGetReply {
   repeated string Where2Get = 1;
