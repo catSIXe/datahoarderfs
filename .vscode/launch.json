@@ -25,6 +25,26 @@
             }
         },
         {
+            "name": ".NET Core Launch (Node Debug1)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/monolith/bin/Debug/netcoreapp3.1/monolith.dll",
+            "args": ["-m", "node", "--id", "debug1"],
+            "cwd": "${workspaceFolder}/monolith",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
