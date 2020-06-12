@@ -1,0 +1,2 @@
+obj\Debug\netcoreapp3.1/FileRegistry.cs \
+obj\Debug\netcoreapp3.1/FileRegistryGrpc.cs: Protos/fileRegistry.proto

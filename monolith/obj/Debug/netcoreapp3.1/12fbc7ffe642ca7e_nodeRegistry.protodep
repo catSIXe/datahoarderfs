@@ -1,0 +1,2 @@
+obj\Debug\netcoreapp3.1/NodeRegistry.cs \
+obj\Debug\netcoreapp3.1/NodeRegistryGrpc.cs: Protos/nodeRegistry.proto
