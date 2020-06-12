@@ -21,3 +21,7 @@ dotnet_diagnostic.SA0001.severity = none
 # SA1500: Ignoring "the better style" ;-P
 dotnet_diagnostic.SA1500.severity = none
 
+# opneing/closing brakets
+dotnet_diagnostic.SA1012.severity = none
+dotnet_diagnostic.SA1013.severity = none
+
