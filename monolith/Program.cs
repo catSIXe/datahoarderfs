@@ -22,9 +22,9 @@ namespace monolith {
             
         }
 
-        public static void Main(string[] args) {
-            Parser.Default.ParseArguments<Options>(args)
-            .WithParsed<Options>(o => {
+        public static async Task Main(string[] args) {
+            await Parser.Default.ParseArguments<Options>(args)
+            .WithParsedAsync<Options>(async o => {
                 Console.WriteLine("[CParser] Running as {0}", o.Mode);
                 switch (o.Mode.ToLower()) {
                     case "tracker":
@@ -32,9 +32,7 @@ namespace monolith {
                     break;
                     case "node":
                         var node = new ManagedNode(o);
-                        Task.Run(async () => await node.Run());
-                        while (true) { Thread.Sleep(200); }
-                        //Console.ReadKey();
+                        await node.Run();
                     break;
                 }
                 Console.WriteLine("exited");

@@ -25,7 +25,7 @@ namespace monolith
 
         public async Task Run()
         {
-            Uri Address = new Uri($"https://{ o.Host }:${ o.Port }");
+            Uri Address = new Uri($"https://{ o.Host }:{ o.Port }");
             services.AddGrpcClient<NodeRegistry.NodeRegistryClient>(o =>
             {
                 o.Address = Address;
@@ -40,16 +40,12 @@ namespace monolith
             try
             {
                 Console.WriteLine(Address);
-                /*using var channel = GrpcChannel.ForAddress($"https://{ o.Host }:{ o.Port }");
-
-                var nodeRegistryClient = new NodeRegistry.NodeRegistryClient(channel);
-                var fileRegistryClient = new FileRegistry.FileRegistryClient(channel);*/
                 { // Auth
                     var reply = await provider.GetRequiredService<NodeRegistry.NodeRegistryClient>().AuthenticateAsync(
                                 new NodeAuthenticationRequest { Identifier = o.ClientID });
                     Console.WriteLine($"Authentication as { o.ClientID }: " + reply.Status);
                 }
-                {
+                { // Auth Check
                     var reply = await provider.GetRequiredService<NodeRegistry.NodeRegistryClient>().TestAsync(new NodeTestRequest { Identifier = o.ClientID });
                     Console.WriteLine($"Authentication Test as { o.ClientID }: " + reply.Status);
                     if (reply.Status == false) {
