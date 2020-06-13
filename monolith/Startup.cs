@@ -28,7 +28,7 @@ namespace monolith
             services.AddAuthorization();
 
             services.AddGrpc();
-            services.AddSingleton(new monolith.PostgresProvider("Host=10.13.37.81;Username=datahoarderfs;Password=datahoarderfs;Database=datahoarderfs"));
+            services.AddSingleton(new monolith.PostgresProvider("Host=10.13.37.81;Username=datahoarderfs;Password=datahoarderfs;Database=datahoarder"));
             services.AddSingleton<monolith.Server.NodeRegistry>();
             services.AddSingleton<monolith.Server.FileRegistry>();
 
