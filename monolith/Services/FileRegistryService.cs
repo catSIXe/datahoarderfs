@@ -11,12 +11,12 @@ namespace monolith
     {
         private ILogger<FileRegistryService> _logger { get; }
 
-        private monolith.Server.FileRegistry fileRegistry { get; }
-        private monolith.Server.NodeRegistry nodeRegistry { get; }
+        private monolith.Tracker.FileRegistry fileRegistry { get; }
+        private monolith.Tracker.NodeRegistry nodeRegistry { get; }
 
         public FileRegistryService(
-            monolith.Server.FileRegistry fileRegistry,
-            monolith.Server.NodeRegistry nodeRegistry,
+            monolith.Tracker.FileRegistry fileRegistry,
+            monolith.Tracker.NodeRegistry nodeRegistry,
             ILogger<FileRegistryService> logger
         )
         {
@@ -27,7 +27,7 @@ namespace monolith
 
         public async override Task<FileRegisterReply> Register(FileRegisterRequest request, ServerCallContext context)
         {
-            Guid id = await this.fileRegistry.Register(new Server.File { 
+            Guid id = await this.fileRegistry.Register(new Tracker.File { 
                 Filename = request.Filename,
                 Owner = context.GetHttpContext().User.Identity.Name,
             });
@@ -41,7 +41,7 @@ namespace monolith
         {
             // context.GetHttpContext().User
             var reply = new FileBrowseReply { };
-            Server.File[] res = await this.fileRegistry.Browse();
+            Tracker.File[] res = await this.fileRegistry.Browse();
 
             foreach (var file in res)
                 reply.Files.Add(new File {
@@ -56,11 +56,12 @@ namespace monolith
         {
             // await Server.FileRegistry.Instance.Register(new Server.File(request.Filename));
             Guid parsed;
-            var reply = new FileGetReply { };
+            var reply = new FileGetReply {
+             };
             if (Guid.TryParse(request.Id, out parsed)) {
                 reply.Where2Get.Add("bla");
             }
-            return reply;
+            return (await Task.FromResult(reply));
         }
     }
 }

@@ -13,12 +13,11 @@ namespace monolith
     public class NodeRegistryService : NodeRegistry.NodeRegistryBase
     {
         private readonly ILogger<NodeRegistryService> _logger;
-        private monolith.Server.FileRegistry fileRegistry { get; }
-        private monolith.Server.NodeRegistry nodeRegistry { get; }
+        private monolith.Tracker.FileRegistry fileRegistry { get; }
+        private monolith.Tracker.NodeRegistry nodeRegistry { get; }
 
         public NodeRegistryService(
-            // monolith.Server.FileRegistry fileRegistry,  // maybe needing it, maybe not, lets see.
-            monolith.Server.NodeRegistry nodeRegistry, 
+            monolith.Tracker.NodeRegistry nodeRegistry, 
             ILogger<NodeRegistryService> logger
         ) {
             _logger = logger;
@@ -27,7 +26,7 @@ namespace monolith
         }
 
         public async override Task<NodeAuthenticationReply> Authenticate(NodeAuthenticationRequest request, ServerCallContext context) {
-            Server.Node node = new Server.Node(request.Identifier);
+            Tracker.Node node = new Tracker.Node(request.Identifier);
             await this.nodeRegistry.Register(node);
             _logger.LogInformation($"Node Connected { request.Identifier }");
             // context.UserState["UserId"] = request.Identifier;
@@ -49,15 +48,15 @@ namespace monolith
                 }
             );
 
-            return new NodeAuthenticationReply {
+            return (await Task.FromResult(new NodeAuthenticationReply {
                 Status = true
-            };
+            }));
         }
 
         public async override Task<NodeTestReply> Test(NodeTestRequest request, ServerCallContext context) {
-            return new NodeTestReply {
+            return (await Task.FromResult(new NodeTestReply {
                 Status = request.Identifier == context.GetHttpContext().User.Identity.Name
-            };
+            }));
         }
     }
 }
