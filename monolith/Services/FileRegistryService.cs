@@ -29,6 +29,7 @@ namespace monolith
         {
             Guid id = await this.fileRegistry.Register(new Tracker.File { 
                 Filename = request.Filename,
+                ContainerID = Guid.Parse(request.Container),
                 Owner = context.GetHttpContext().User.Identity.Name,
             });
 
@@ -39,18 +40,22 @@ namespace monolith
         }
         public async override Task<FileBrowseReply> Browse(FileBrowseRequest request, ServerCallContext context)
         {
-            // context.GetHttpContext().User
-            var reply = new FileBrowseReply { };
-            Tracker.File[] res = await this.fileRegistry.Browse();
+            Guid containerId;
+            if (Guid.TryParse(request.Container, out containerId)) {
+                // context.GetHttpContext().User
+                var reply = new FileBrowseReply { };
+                Tracker.File[] res = await this.fileRegistry.Browse(containerId, request.Page);
 
-            foreach (var file in res)
-                reply.Files.Add(new File {
-                    Id = file.Id.ToString(),
-                    Owner = file.Owner,
-                    Filename = file.Filename,
-                });
+                foreach (var file in res)
+                    reply.Files.Add(new File {
+                        Id = file.Id.ToString(),
+                        Owner = file.Owner,
+                        Filename = file.Filename,
+                    });
 
-            return reply;
+                return reply;
+            }
+            throw new Exception("invalid container guid");
         }
         public async override Task<FileGetReply> Get(FileGetRequest request, ServerCallContext context)
         {

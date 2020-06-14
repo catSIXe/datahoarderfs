@@ -31,7 +31,7 @@ namespace monolith {
                         CreateHostBuilder(args).Build().Run();
                     break;
                     case "node":
-                        var node = new ManagedNode(o);
+                        var node = new Node.ManagedNode(o);
                         await node.Run();
                     break;
                 }
@@ -45,7 +45,7 @@ namespace monolith {
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Tracker.Startup>();
                 });
     }
 }

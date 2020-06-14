@@ -16,10 +16,12 @@ message File {
   string Id = 1;
   string Filename = 2;
   string Owner = 3;
+  // string Container = 4;
 }
 
 message FileRegisterRequest {
-  string Filename = 1;
+  string Container = 1;
+  string Filename = 2;
 }
 message FileRegisterReply {
   string Id = 1;
@@ -27,6 +29,8 @@ message FileRegisterReply {
 
 
 message FileBrowseRequest {
+  string Container = 1;
+  int32 Page = 2;
   // empty
 }
 message FileBrowseReply {

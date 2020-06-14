@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 
-namespace monolith
+namespace monolith.Tracker
 {
     public class Startup
     {
@@ -28,29 +28,11 @@ namespace monolith
             services.AddAuthorization();
 
             services.AddGrpc();
-            services.AddSingleton(new monolith.PostgresProvider("10.13.37.81", "datahoarderfs", "datahoarderfs", "datahoarder"));
-            services.AddSingleton<monolith.Server.NodeRegistry>();
-            services.AddSingleton<monolith.Server.FileRegistry>();
-
-
-            /*services.AddAuthentication(options => {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(jwtBearerOptions => {
-                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-
-                    // ValidIssuer = "http://localhost:5001",
-                    // ValidAudience = "http://localhost:5001",
-                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("JustStaticTextIsFine xD"))
-                };
-            });*/
+            services.AddSingleton(new monolith.PostgresProvider("10.13.37.81", "datahoarderfs", "datahoarderfs", "datahoarder_prod"));
+            services.AddSingleton<monolith.Tracker.NodeRegistry>();
+            services.AddSingleton<monolith.Tracker.FileRegistry>();
+            services.AddSingleton<monolith.Tracker.ContainerRegistry>();
         }
-
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -71,6 +53,7 @@ namespace monolith
             {
                 endpoints.MapGrpcService<NodeRegistryService>();
                 endpoints.MapGrpcService<FileRegistryService>();
+                endpoints.MapGrpcService<ContainerRegistryService>();
 
                 endpoints.MapGet("/", async context =>
                 {

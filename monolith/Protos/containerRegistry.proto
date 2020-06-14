@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option csharp_namespace = "monolith";
+
+package datahoarderfs;
+
+service ContainerRegistry {
+  rpc Register (ContainerRegisterRequest) returns (ContainerRegisterReply);
+  rpc Browse (ContainerBrowseRequest) returns (ContainerBrowseReply);
+}
+
+message Container {
+  string Id = 1;
+  string Name = 2;
+  string Creator = 3;
+}
+
+message ContainerRegisterRequest {
+  string Name = 1;
+}
+message ContainerRegisterReply {
+  string Id = 1;
+}
+
+message ContainerBrowseRequest {
+  // empty
+}
+message ContainerBrowseReply {
+  repeated Container Containers = 1;
+}

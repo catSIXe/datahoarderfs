@@ -5,7 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace monolith
+namespace monolith.Node
 {
     internal class ManagedNode
     {
@@ -26,17 +26,14 @@ namespace monolith
         public async Task Run()
         {
             Uri Address = new Uri($"https://{ o.Host }:{ o.Port }");
-            services.AddGrpcClient<NodeRegistry.NodeRegistryClient>(o =>
-            {
-                o.Address = Address;
-            });
-            services.AddGrpcClient<FileRegistry.FileRegistryClient>(o =>
-            {
-                o.Address = Address;
-            });
+            using var channel = GrpcChannel.ForAddress(Address);
+
+            services.AddSingleton(new NodeRegistry.NodeRegistryClient(channel));
+            services.AddSingleton(new FileRegistry.FileRegistryClient(channel));
+            services.AddSingleton(new ContainerRegistry.ContainerRegistryClient(channel));
+
             ServiceProvider serviceProvider = services.BuildServiceProvider();
             var provider = serviceProvider;
-            // The port number(5001) must match the port of the gRPC server.
             try
             {
                 Console.WriteLine(Address);
@@ -64,24 +61,51 @@ namespace monolith
                         switch (command.IndexOf(' ') > -1 ? args[0] : command)
                         {
                             case "exit": gracefulDisconnect = true; break;
-                            case "register":
+                            case "ct.register":
                                 if (args.Length == 2)
                                 {
-                                    var fileName = args[1];
-                                    var reply = await provider.GetRequiredService<FileRegistry.FileRegistryClient>().RegisterAsync(
-                                        new FileRegisterRequest { Filename = fileName });
+                                    var containerName = args[1];
+                                    var reply = await provider.GetRequiredService<ContainerRegistry.ContainerRegistryClient>().RegisterAsync(
+                                        new ContainerRegisterRequest { Name = containerName });
                                     Console.WriteLine($"{ reply.Id }");
                                 }
                                 break;
-                            case "browse":
+                            case "ct.browse":
                                 {
+                                    var reply = await provider.GetRequiredService<ContainerRegistry.ContainerRegistryClient>().BrowseAsync(
+                                        new ContainerBrowseRequest { });
+                                    foreach (var container in reply.Containers)
+                                        Console.WriteLine(container);
+                                }
+                                break;
+                            case "file.register":
+                                if (args.Length == 3)
+                                {
+                                    var containerID = args[1];
+                                    var fileName = args[2];
+                                    var reply = await provider.GetRequiredService<FileRegistry.FileRegistryClient>().RegisterAsync(
+                                        new FileRegisterRequest { Container = containerID, Filename = fileName });
+                                    Console.WriteLine($"{ reply.Id }");
+                                }
+                                break;
+                            case "file.browse":
+                                if (args.Length == 2)
+                                {
+                                    var containerID = args[1];
                                     var reply = await provider.GetRequiredService<FileRegistry.FileRegistryClient>().BrowseAsync(
-                                        new FileBrowseRequest { });
+                                        new FileBrowseRequest { Container = containerID });
                                     foreach (var file in reply.Files)
                                         Console.WriteLine(file);
                                 }
                                 break;
-                            case "get":
+                            case "help": {
+                                Console.WriteLine("ct.browse");
+                                Console.WriteLine("ct.register <container name>");
+                                Console.WriteLine("file.register <container id> <filename>");
+                                Console.WriteLine("file.browse <container id>");
+
+                            } break;
+                            /*case "file.download":
                                 if (args.Length == 2)
                                 {
                                     var id = args[1];
@@ -90,11 +114,10 @@ namespace monolith
                                     foreach (var fileName in reply.Where2Get)
                                         Console.WriteLine($"{ fileName }");
                                 }
-                                break;
+                                break;*/
                         }
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         Console.WriteLine(e);
                     }
                 } while (!gracefulDisconnect);
