@@ -29,9 +29,12 @@ namespace monolith.Tracker
 
             services.AddGrpc();
             services.AddSingleton(new monolith.PostgresProvider("10.13.37.81", "datahoarderfs", "datahoarderfs", "datahoarder_prod"));
+
             services.AddSingleton<monolith.Tracker.NodeRegistry>();
             services.AddSingleton<monolith.Tracker.FileRegistry>();
             services.AddSingleton<monolith.Tracker.ContainerRegistry>();
+
+            services.AddSingleton<monolith.Tracker.NodeInactivityCleaner>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +46,8 @@ namespace monolith.Tracker
             }
             app.UseAuthentication();
             app.UseRouting();
+
+            app.ApplicationServices.GetService<monolith.Tracker.NodeInactivityCleaner>().Start(); // to call the constructor of it
 
             // Cookie Policy Middleware enables cookie policy capabilities. 
             // Adding the middleware to the app processing pipeline is order sensitive—it only affects downstream components registered in the pipeline.

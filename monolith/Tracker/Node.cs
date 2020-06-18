@@ -14,6 +14,9 @@ namespace monolith.Tracker {
             this.Identifier = Identifier;
             this.lastActivity = DateTime.Now;
         }
-
+        public void MarkActivity() {
+            this.lastActivity = DateTime.Now;
+            Console.WriteLine($"{ this.Identifier } lastActivity { this.lastActivity }");
+        }
     }
 }

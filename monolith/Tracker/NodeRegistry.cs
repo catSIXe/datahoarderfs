@@ -21,5 +21,18 @@ namespace monolith.Tracker
             this.registry.Add(node.Identifier, node);
             return await Task.FromResult(true);
         }
+        public async Task CollectGarbage() {
+            // Console.WriteLine("[NodeRegistry] collecting garbage");
+            foreach (var node in this.registry.Values) {
+                // Console.WriteLine(DateTime.Now.Subtract(node.lastActivity));
+                if (DateTime.Now.Subtract(node.lastActivity).TotalMinutes >= 1) {
+                    Console.WriteLine($"[NodeRegistry] cleaned { node.Identifier  }");
+                    this.registry.Remove(node.Identifier);
+                }
+            }
+        }
+        public async Task<Node> Get(string nodeIdentifier) {
+            return this.registry[nodeIdentifier];
+        }
     }
 }

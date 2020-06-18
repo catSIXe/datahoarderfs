@@ -49,13 +49,21 @@ namespace monolith
             );
 
             return (await Task.FromResult(new NodeAuthenticationReply {
-                Status = true
+                Status = true,
+                KeepAliveInterval = 30
             }));
         }
 
         public async override Task<NodeTestReply> Test(NodeTestRequest request, ServerCallContext context) {
             return (await Task.FromResult(new NodeTestReply {
                 Status = request.Identifier == context.GetHttpContext().User.Identity.Name
+            }));
+        }
+        public async override Task<NodeUpdateStreamReply> UpdateStream(NodeUpdateStreamRequest request, ServerCallContext context) {
+            var node = await this.nodeRegistry.Get(context.GetHttpContext().User.Identity.Name);
+            node.MarkActivity();
+            return (await Task.FromResult(new NodeUpdateStreamReply {
+                Status = true,
             }));
         }
     }

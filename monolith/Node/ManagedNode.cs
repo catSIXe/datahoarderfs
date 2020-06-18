@@ -32,6 +32,8 @@ namespace monolith.Node
             services.AddSingleton(new FileRegistry.FileRegistryClient(channel));
             services.AddSingleton(new ContainerRegistry.ContainerRegistryClient(channel));
 
+            services.AddSingleton<NodeKeepAliveTask>();
+
             ServiceProvider serviceProvider = services.BuildServiceProvider();
             var provider = serviceProvider;
             try
@@ -41,6 +43,7 @@ namespace monolith.Node
                     var reply = await provider.GetRequiredService<NodeRegistry.NodeRegistryClient>().AuthenticateAsync(
                                 new NodeAuthenticationRequest { Identifier = o.ClientID });
                     Console.WriteLine($"Authentication as { o.ClientID }: " + reply.Status);
+                    await provider.GetRequiredService<NodeKeepAliveTask>().Start(reply.KeepAliveInterval);
                 }
                 { // Auth Check
                     var reply = await provider.GetRequiredService<NodeRegistry.NodeRegistryClient>().TestAsync(new NodeTestRequest { Identifier = o.ClientID });
