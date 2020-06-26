@@ -5,7 +5,7 @@
 -- Dumped from database version 12.3 (Ubuntu 12.3-1.pgdg20.04+1)
 -- Dumped by pg_dump version 12.3 (Ubuntu 12.3-1.pgdg20.04+1)
 
--- Started on 2020-06-26 07:20:28 UTC
+-- Started on 2020-06-26 07:53:32 UTC
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -87,7 +87,8 @@ ALTER TABLE public.files OWNER TO postgres;
 CREATE TABLE public.fileversions (
     id uuid NOT NULL,
     file_id uuid NOT NULL,
-    date date NOT NULL
+    date date NOT NULL,
+    size bigint NOT NULL
 );
 
 
@@ -139,7 +140,7 @@ COPY public.files (id, container_id, filename, owner) FROM stdin;
 -- Data for Name: fileversions; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.fileversions (id, file_id, date) FROM stdin;
+COPY public.fileversions (id, file_id, date, size) FROM stdin;
 \.
 
 
@@ -260,7 +261,7 @@ ALTER TABLE ONLY public.fileversions
 GRANT ALL ON TABLE public.files TO datahoarderfs;
 
 
--- Completed on 2020-06-26 07:20:28 UTC
+-- Completed on 2020-06-26 07:53:32 UTC
 
 --
 -- PostgreSQL database dump complete
