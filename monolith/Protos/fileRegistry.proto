@@ -9,17 +9,21 @@ package datahoarderfs;
 /*
 I think I would have an api like 
 
-GetFileHistory(container, filePath, continuationToken = null); //Returns a paginated list of all file versions, and if they are still available
+GetFileHistory(container, filePath, continuationToken = null);
 
-GetFileChunks(container, filePath, verisonId); // Get a list of file chunks that needs to be downloaded
+GetFileChunks(container, filePath, verisonId); 
 */
 
 service FileRegistry {
   rpc Register (FileRegisterRequest) returns (FileRegisterReply);
   rpc Browse (FileBrowseRequest) returns (FileBrowseReply);
   rpc Get (FileGetRequest) returns (FileGetReply);
+
   rpc GetFileInformation(FileInformationRequest) returns (FileInformationResponse);
+  rpc GetFileHistory(FileHistoryRequest) returns (FileHistoryResponse);
+  rpc GetFileChunks(FileChunksRequest) returns (FileChunksResponse);
 }
+
 // Returns information about the file, including the latest version id
 message FileInformationRequest {
   string Id = 1;
@@ -29,6 +33,28 @@ message FileInformationResponse {
   string lastVersion = 2;
 }
 
+//Returns a paginated list of all file versions, and if they are still available
+message FileHistoryRequest {
+  string Id = 1;
+}
+message FileHistoryResponse {
+  repeated FileHistoryEntry History = 1;
+}
+
+// Get a list of file chunks that needs to be downloaded
+message FileChunksRequest {
+  string Id = 1;
+}
+message FileChunksResponse {
+  repeated FileHistoryEntry History = 1;
+}
+
+
+message FileHistoryEntry {
+  string Id = 1;
+  google.protobuf.Timestamp Date = 2;
+  int32 Size = 3;
+}
 message File {
   string Id = 1;
   string Filename = 2;
