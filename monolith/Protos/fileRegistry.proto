@@ -1,21 +1,44 @@
 syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
 
 option csharp_namespace = "monolith";
 
 package datahoarderfs;
 
+/*
+I think I would have an api like 
+
+GetFileHistory(container, filePath, continuationToken = null); //Returns a paginated list of all file versions, and if they are still available
+
+GetFileChunks(container, filePath, verisonId); // Get a list of file chunks that needs to be downloaded
+*/
 
 service FileRegistry {
   rpc Register (FileRegisterRequest) returns (FileRegisterReply);
   rpc Browse (FileBrowseRequest) returns (FileBrowseReply);
   rpc Get (FileGetRequest) returns (FileGetReply);
+  rpc GetFileInformation(FileInformationRequest) returns (FileInformationResponse);
 }
-
+// Returns information about the file, including the latest version id
+message FileInformationRequest {
+  string Id = 1;
+}
+message FileInformationResponse {
+  File file = 1;
+  string lastVersion = 2;
+}
 
 message File {
   string Id = 1;
   string Filename = 2;
   string Owner = 3;
+  // string Container = 4;
+}
+message FileVersion {
+  string Id = 1;
+  string FileID = 2;
+  google.protobuf.Timestamp Date = 3;
   // string Container = 4;
 }
 
