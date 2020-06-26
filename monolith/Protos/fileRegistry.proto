@@ -6,38 +6,29 @@ option csharp_namespace = "monolith";
 
 package datahoarderfs;
 
-/*
-I think I would have an api like 
-
-GetFileHistory(container, filePath, continuationToken = null);
-
-GetFileChunks(container, filePath, verisonId); 
-*/
-
 service FileRegistry {
   rpc Register (FileRegisterRequest) returns (FileRegisterReply);
   rpc Browse (FileBrowseRequest) returns (FileBrowseReply);
-  rpc Get (FileGetRequest) returns (FileGetReply);
 
-  rpc GetFileInformation(FileInformationRequest) returns (FileInformationResponse);
-  rpc GetFileHistory(FileHistoryRequest) returns (FileHistoryResponse);
-  rpc GetFileChunks(FileChunksRequest) returns (FileChunksResponse);
+  rpc GetFileInformation(FileInformationRequest) returns (FileInformationReply);
+  rpc GetFileHistory(FileHistoryRequest) returns (FileHistoryReply);
+  rpc GetFileChunks(FileChunksRequest) returns (FileChunksReply);
 }
 
 // Returns information about the file, including the latest version id
 message FileInformationRequest {
   string Id = 1;
 }
-message FileInformationResponse {
+message FileInformationReply {
   File file = 1;
   string lastVersion = 2;
 }
 
-//Returns a paginated list of all file versions, and if they are still available
+//Returns a list of all file versions, and if they are still available
 message FileHistoryRequest {
   string Id = 1;
 }
-message FileHistoryResponse {
+message FileHistoryReply {
   repeated FileHistoryEntry History = 1;
 }
 
@@ -45,7 +36,7 @@ message FileHistoryResponse {
 message FileChunksRequest {
   string Id = 1;
 }
-message FileChunksResponse {
+message FileChunksReply {
   repeated FileHistoryEntry History = 1;
 }
 
@@ -68,6 +59,8 @@ message FileVersion {
   // string Container = 4;
 }
 
+
+
 message FileRegisterRequest {
   string Container = 1;
   string Filename = 2;
@@ -76,7 +69,6 @@ message FileRegisterReply {
   string Id = 1;
 }
 
-
 message FileBrowseRequest {
   string Container = 1;
   int32 Page = 2;
@@ -84,12 +76,4 @@ message FileBrowseRequest {
 }
 message FileBrowseReply {
   repeated File Files = 1;
-}
-
-
-message FileGetRequest {
-  string Id = 1;
-}
-message FileGetReply {
-  repeated string Where2Get = 1;
 }
