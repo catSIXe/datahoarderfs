@@ -21,9 +21,9 @@ namespace monolith.Tracker
         {
             var id = Guid.NewGuid();
             using var conn = await postgresProvider.NewConnection();
-            await conn.ExecuteAsync("INSERT INTO files(id, container_id, filename, owner) VALUES (@Id, @ContainerId, @Filename, @Owner)", new {
+            await conn.ExecuteAsync("INSERT INTO files(id, containerid, filename, owner) VALUES (@Id, @ContainerId, @Filename, @Owner)", new {
                 Id = id,
-                ContainerId = file.ContainerID,
+                ContainerId = file.ContainerId,
                 Filename = file.Filename,
                 Owner = file.Owner
             });
@@ -32,7 +32,7 @@ namespace monolith.Tracker
         public async Task<File[]> Browse(Guid containerId, int page = 0)
         {
             using var conn = await postgresProvider.NewConnection();
-            var res = await conn.QueryAsync<File>("SELECT * FROM files WHERE container_id = @ContainerId LIMIT @Limit OFFSET @Offset", new {
+            var res = await conn.QueryAsync<File>("SELECT * FROM files WHERE containerid = @ContainerId LIMIT @Limit OFFSET @Offset", new {
                 ContainerId = containerId,
                 Limit = 100,
                 Offset = page * 100,
@@ -40,6 +40,14 @@ namespace monolith.Tracker
             return res.ToArray();
         }
         public async Task<File> Get(Guid id)
+        {
+            using var conn = await postgresProvider.NewConnection();
+            var res = await conn.QueryAsync<File>("SELECT * FROM files WHERE Id = @Id LIMIT 1", new {
+                Id = id,
+            });
+            return res.First();
+        }
+        public async Task<File> GetFileInformation(Guid id)
         {
             using var conn = await postgresProvider.NewConnection();
             var res = await conn.QueryAsync<File>("SELECT * FROM files WHERE Id = @Id LIMIT 1", new {

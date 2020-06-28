@@ -17,32 +17,35 @@ namespace monolith.Tracker
             this.postgresProvider = postgresProvider;
             Console.WriteLine("[FileChunkRegistry] has been initialized");
         }
-        public async Task<Guid> Register(File file)
+        public async Task<Guid> Register(FileChunk fileChunk)
         {
             var id = Guid.NewGuid();
             using var conn = await postgresProvider.NewConnection();
-            await conn.ExecuteAsync("INSERT INTO files(id, container_id, filename, owner) VALUES (@Id, @ContainerId, @Filename, @Owner)", new {
+            await conn.ExecuteAsync("INSERT INTO chunks(id, fileid, \"order\", size) VALUES (@Id, @FileId, @Order, @Size)", new {
                 Id = id,
-                ContainerId = file.ContainerID,
-                Filename = file.Filename,
-                Owner = file.Owner
+                Order = fileChunk.Order,
+                FileId = fileChunk.FileId,
+                Size = fileChunk.Size
             });
             return id;
         }
-        public async Task<File[]> Browse(Guid containerId, int page = 0)
+        public async Task<FileChunk[]> Browse(Guid fileVersionId, int page = 0)
         {
             using var conn = await postgresProvider.NewConnection();
-            var res = await conn.QueryAsync<File>("SELECT * FROM files WHERE container_id = @ContainerId LIMIT @Limit OFFSET @Offset", new {
-                ContainerId = containerId,
+            var res = await conn.QueryAsync<FileVersionsChunksStruct>("SELECT * FROM file_versions_chunks WHERE fileversion_id = @FileVersionId LIMIT @Limit OFFSET @Offset", new {
+                FileVersionId = fileVersionId,
                 Limit = 100,
                 Offset = page * 100,
             });
-            return res.ToArray();
+
+            //TODO: subselect for the chunks themself
+            // res.ToArray()
+            return null;
         }
-        public async Task<File> Get(Guid id)
+        public async Task<FileChunk> Get(Guid id)
         {
             using var conn = await postgresProvider.NewConnection();
-            var res = await conn.QueryAsync<File>("SELECT * FROM files WHERE Id = @Id LIMIT 1", new {
+            var res = await conn.QueryAsync<FileChunk>("SELECT * FROM chunks WHERE Id = @Id LIMIT 1", new {
                 Id = id,
             });
             return res.First();
