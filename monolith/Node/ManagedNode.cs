@@ -43,7 +43,7 @@ namespace monolith.Node
                     var reply = await provider.GetRequiredService<NodeRegistry.NodeRegistryClient>().AuthenticateAsync(
                                 new NodeAuthenticationRequest { Identifier = o.ClientID });
                     Console.WriteLine($"Authentication as { o.ClientID }: " + reply.Status);
-                    await provider.GetRequiredService<NodeKeepAliveTask>().Start(reply.KeepAliveInterval);
+                    provider.GetRequiredService<NodeKeepAliveTask>().Start(reply.KeepAliveInterval);
                 }
                 { // Auth Check
                     var reply = await provider.GetRequiredService<NodeRegistry.NodeRegistryClient>().TestAsync(new NodeTestRequest { Identifier = o.ClientID });
@@ -58,6 +58,7 @@ namespace monolith.Node
                 { // Main Loop
                     try
                     {
+                        Console.Write(">");
                         var command = Console.ReadLine();
                         var args = command.Split(' ');
 

@@ -1,23 +1,65 @@
 syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
 
 option csharp_namespace = "monolith";
 
 package datahoarderfs;
 
-
 service FileRegistry {
   rpc Register (FileRegisterRequest) returns (FileRegisterReply);
   rpc Browse (FileBrowseRequest) returns (FileBrowseReply);
-  rpc Get (FileGetRequest) returns (FileGetReply);
+
+  rpc GetFileInformation(FileInformationRequest) returns (FileInformationReply);
+  rpc GetFileHistory(FileHistoryRequest) returns (FileHistoryReply);
+  rpc GetFileChunks(FileChunksRequest) returns (FileChunksReply);
+}
+
+// Returns information about the file, including the latest version id
+message FileInformationRequest {
+  string Id = 1;
+}
+message FileInformationReply {
+  File file = 1;
+  string lastVersion = 2;
+}
+
+//Returns a list of all file versions, and if they are still available
+message FileHistoryRequest {
+  string Id = 1;
+}
+message FileHistoryReply {
+  repeated FileHistoryEntry History = 1;
+}
+
+// Get a list of file chunks that needs to be downloaded
+message FileChunksRequest {
+  string Id = 1;
+}
+message FileChunksReply {
+  repeated FileHistoryEntry History = 1;
 }
 
 
+message FileHistoryEntry {
+  string Id = 1;
+  google.protobuf.Timestamp Date = 2;
+  int32 Size = 3;
+}
 message File {
   string Id = 1;
   string Filename = 2;
   string Owner = 3;
   // string Container = 4;
 }
+message FileVersion {
+  string Id = 1;
+  string FileID = 2;
+  google.protobuf.Timestamp Date = 3;
+  // string Container = 4;
+}
+
+
 
 message FileRegisterRequest {
   string Container = 1;
@@ -27,7 +69,6 @@ message FileRegisterReply {
   string Id = 1;
 }
 
-
 message FileBrowseRequest {
   string Container = 1;
   int32 Page = 2;
@@ -35,12 +76,4 @@ message FileBrowseRequest {
 }
 message FileBrowseReply {
   repeated File Files = 1;
-}
-
-
-message FileGetRequest {
-  string Id = 1;
-}
-message FileGetReply {
-  repeated string Where2Get = 1;
 }
