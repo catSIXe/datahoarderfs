@@ -9,7 +9,7 @@ namespace monolith.Tracker {
     public class FileChunk {
         public Guid Id { get; set; }
         public Guid FileId { get; set; }
-        public int Order { get; set; }
-        public int Size { get; set; }
+        public long Order { get; set; }
+        public long Size { get; set; }
     }
 }

@@ -10,6 +10,6 @@ namespace monolith.Tracker {
         public Guid Id { get; set; }
         public Guid FileId { get; set; }
         public DateTime Date { get; set; }
-        public int Size { get; set; }
+        public long Size { get; set; }
     }
 }
