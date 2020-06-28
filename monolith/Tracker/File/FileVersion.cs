@@ -8,7 +8,8 @@ using Microsoft.Extensions.Logging;
 namespace monolith.Tracker {
     public class FileVersion {
         public Guid Id { get; set; }
-        public Guid File { get; set; }
+        public Guid FileId { get; set; }
         public DateTime Date { get; set; }
+        public int Size { get; set; }
     }
 }
