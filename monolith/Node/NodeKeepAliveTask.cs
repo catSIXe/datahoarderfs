@@ -31,7 +31,7 @@ namespace monolith.Node
             });
         }
         public async Task<monolith.NodeUpdateStreamReply> SendKeepAlive() {
-            Console.WriteLine("Sent keepAlive");
+            //Console.WriteLine("Sent keepAlive");
             return await this.nodeRegistryClient.UpdateStreamAsync(new NodeUpdateStreamRequest {
             });
         }

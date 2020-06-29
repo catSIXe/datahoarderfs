@@ -13,15 +13,25 @@ namespace monolith
 
         private monolith.Tracker.FileRegistry fileRegistry { get; }
         private monolith.Tracker.NodeRegistry nodeRegistry { get; }
+        private monolith.Tracker.FileVersionRegistry fileVersionRegistry { get; }
+        private monolith.Tracker.FileChunkRegistry fileChunkRegistry { get; }
+        
 
         public FileRegistryService(
             monolith.Tracker.FileRegistry fileRegistry,
+            monolith.Tracker.FileVersionRegistry fileVersionRegistry,
+            monolith.Tracker.FileChunkRegistry fileChunkRegistry,
+
             monolith.Tracker.NodeRegistry nodeRegistry,
             ILogger<FileRegistryService> logger
         )
         {
             _logger = logger;
+
             this.fileRegistry = fileRegistry;
+            this.fileVersionRegistry = fileVersionRegistry;
+            this.fileChunkRegistry = fileChunkRegistry;
+
             this.nodeRegistry = nodeRegistry;
         }
 
@@ -29,7 +39,7 @@ namespace monolith
         {
             Guid id = await this.fileRegistry.Register(new Tracker.File { 
                 Filename = request.Filename,
-                ContainerID = Guid.Parse(request.Container),
+                ContainerId = Guid.Parse(request.Container),
                 Owner = context.GetHttpContext().User.Identity.Name,
             });
 
@@ -57,7 +67,7 @@ namespace monolith
             }
             throw new Exception("invalid container guid");
         }
-        public async override Task<FileGetReply> Get(FileGetRequest request, ServerCallContext context)
+        /*public async override Task<FileGetReply> Get(FileGetRequest request, ServerCallContext context)
         {
             // await Server.FileRegistry.Instance.Register(new Server.File(request.Filename));
             Guid parsed;
@@ -65,6 +75,33 @@ namespace monolith
              };
             if (Guid.TryParse(request.Id, out parsed)) {
                 reply.Where2Get.Add("bla");
+            }
+            return (await Task.FromResult(reply));
+        }*/
+
+        // Dummy Functions
+        public async override Task<FileInformationReply> GetFileInformation(FileInformationRequest request, ServerCallContext context)
+        {
+            // await Server.FileRegistry.Instance.Register(new Server.File(request.Filename));
+            Guid parsed;
+            var reply = new FileInformationReply { };
+            if (Guid.TryParse(request.Id, out parsed)) {
+            }
+            return (await Task.FromResult(reply));
+        }
+        public async override Task<FileHistoryReply> GetFileHistory(FileHistoryRequest request, ServerCallContext context)
+        {
+            Guid parsed;
+            var reply = new FileHistoryReply { };
+            if (Guid.TryParse(request.Id, out parsed)) {
+            }
+            return (await Task.FromResult(reply));
+        }
+        public async override Task<FileChunksReply> GetFileChunks(FileChunksRequest request, ServerCallContext context)
+        {
+            Guid parsed;
+            var reply = new FileChunksReply { };
+            if (Guid.TryParse(request.Id, out parsed)) {
             }
             return (await Task.FromResult(reply));
         }

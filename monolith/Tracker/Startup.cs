@@ -31,7 +31,11 @@ namespace monolith.Tracker
             services.AddSingleton(new monolith.PostgresProvider("10.13.37.81", "datahoarderfs", "datahoarderfs", "datahoarder_prod"));
 
             services.AddSingleton<monolith.Tracker.NodeRegistry>();
+            
             services.AddSingleton<monolith.Tracker.FileRegistry>();
+            services.AddSingleton<monolith.Tracker.FileVersionRegistry>();
+            services.AddSingleton<monolith.Tracker.FileChunkRegistry>();
+
             services.AddSingleton<monolith.Tracker.ContainerRegistry>();
 
             services.AddSingleton<monolith.Tracker.NodeInactivityCleaner>();
