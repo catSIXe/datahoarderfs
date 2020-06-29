@@ -22,16 +22,17 @@ namespace monolith.Tracker
             return await Task.FromResult(true);
         }
         public async Task CollectGarbage() {
-            // Console.WriteLine("[NodeRegistry] collecting garbage");
-            foreach (var node in this.registry.Values) {
-                // Console.WriteLine(DateTime.Now.Subtract(node.lastActivity));
-                if (DateTime.Now.Subtract(node.lastActivity).TotalMinutes >= 1) {
-                    Console.WriteLine($"[NodeRegistry] cleaned { node.Identifier  }");
-                    this.registry.Remove(node.Identifier);
-                }
+            foreach (var node in from node in this.registry.Values
+                                 where DateTime.Now.Subtract(node.lastActivity).TotalMinutes >= 1
+                                 select node)
+            {
+                Console.WriteLine($"[NodeRegistry] cleaned { node.Identifier  }");
+                this.registry.Remove(node.Identifier);
             }
+            await Task.FromResult(true); // make compiler happy
         }
         public async Task<Node> Get(string nodeIdentifier) {
+            await Task.FromResult(true); // make compiler happy
             return this.registry[nodeIdentifier];
         }
     }
