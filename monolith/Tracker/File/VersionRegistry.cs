@@ -8,16 +8,16 @@ using Dapper;
 
 namespace monolith.Tracker
 {
-    public class FileVersionRegistry
+    public class VersionRegistry
     {
         public PostgresProvider postgresProvider { get; }
 
-        public FileVersionRegistry(PostgresProvider postgresProvider)
+        public VersionRegistry(PostgresProvider postgresProvider)
         {
             this.postgresProvider = postgresProvider;
-            Console.WriteLine("[FileVersionRegistry] has been initialized");
+            Console.WriteLine("[Version Registry] has been initialized");
         }
-        public async Task<Guid> Register(FileVersion fileVersion)
+        public async Task<Guid> Register(Version fileVersion)
         {
             var id = Guid.NewGuid();
             using var conn = await postgresProvider.NewConnection();
@@ -29,20 +29,20 @@ namespace monolith.Tracker
             });
             return id;
         }
-        public async Task<FileVersion[]> Browse(Guid fileId, int page = 0)
+        public async Task<Version[]> Browse(Guid fileId, int page = 0)
         {
             using var conn = await postgresProvider.NewConnection();
-            var res = await conn.QueryAsync<FileVersion>("SELECT * FROM fileversions WHERE fileid = @FileId LIMIT @Limit OFFSET @Offset", new {
+            var res = await conn.QueryAsync<Version>("SELECT * FROM fileversions WHERE fileid = @FileId LIMIT @Limit OFFSET @Offset", new {
                 FileId = fileId,
                 Limit = 100,
                 Offset = page * 100,
             });
             return res.ToArray();
         }
-        public async Task<FileVersion> Get(Guid id)
+        public async Task<Version> Get(Guid id)
         {
             using var conn = await postgresProvider.NewConnection();
-            var res = await conn.QueryAsync<FileVersion>("SELECT * FROM fileversions WHERE id = @Id LIMIT 1", new {
+            var res = await conn.QueryAsync<Version>("SELECT * FROM fileversions WHERE id = @Id LIMIT 1", new {
                 Id = id,
             });
             return res.First();

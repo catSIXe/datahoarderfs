@@ -6,7 +6,7 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 
 namespace monolith.Tracker {
-    public class FileChunk {
+    public class Chunk {
         public Guid Id { get; set; }
         public Guid FileId { get; set; }
         public long Order { get; set; }

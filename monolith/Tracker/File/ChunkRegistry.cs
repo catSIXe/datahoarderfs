@@ -8,16 +8,16 @@ using Dapper;
 
 namespace monolith.Tracker
 {
-    public class FileChunkRegistry
+    public class ChunkRegistry
     {
         public PostgresProvider postgresProvider { get; }
 
-        public FileChunkRegistry(PostgresProvider postgresProvider)
+        public ChunkRegistry(PostgresProvider postgresProvider)
         {
             this.postgresProvider = postgresProvider;
-            Console.WriteLine("[FileChunkRegistry] has been initialized");
+            Console.WriteLine("[Chunk Registry] has been initialized");
         }
-        public async Task<Guid> Register(FileChunk fileChunk)
+        public async Task<Guid> Register(Chunk fileChunk)
         {
             var id = Guid.NewGuid();
             using var conn = await postgresProvider.NewConnection();
@@ -29,10 +29,10 @@ namespace monolith.Tracker
             });
             return id;
         }
-        public async Task<FileChunk[]> Browse(Guid fileVersionId, int page = 0)
+        public async Task<Chunk[]> Browse(Guid fileVersionId, int page = 0)
         {
             using var conn = await postgresProvider.NewConnection();
-            var res = await conn.QueryAsync<FileVersionsChunksStruct>("SELECT * FROM file_versions_chunks WHERE fileversion_id = @FileVersionId LIMIT @Limit OFFSET @Offset", new {
+            var res = await conn.QueryAsync<VersionChunksStruct>("SELECT * FROM file_versions_chunks WHERE fileversion_id = @FileVersionId LIMIT @Limit OFFSET @Offset", new {
                 FileVersionId = fileVersionId,
                 Limit = 100,
                 Offset = page * 100,
@@ -42,10 +42,10 @@ namespace monolith.Tracker
             // res.ToArray()
             return null;
         }
-        public async Task<FileChunk> Get(Guid id)
+        public async Task<Chunk> Get(Guid id)
         {
             using var conn = await postgresProvider.NewConnection();
-            var res = await conn.QueryAsync<FileChunk>("SELECT * FROM chunks WHERE Id = @Id LIMIT 1", new {
+            var res = await conn.QueryAsync<Chunk>("SELECT * FROM chunks WHERE Id = @Id LIMIT 1", new {
                 Id = id,
             });
             return res.First();

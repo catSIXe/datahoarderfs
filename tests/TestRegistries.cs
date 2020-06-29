@@ -44,8 +44,8 @@ namespace tests
             PostgresProvider postgresProvider = new monolith.PostgresProvider("10.13.37.81", "datahoarderfs", "datahoarderfs", "datahoarder_test");
             monolith.Tracker.ContainerRegistry containerRegistry = new monolith.Tracker.ContainerRegistry(postgresProvider);
             monolith.Tracker.FileRegistry fileRegistry = new monolith.Tracker.FileRegistry(postgresProvider);
-            monolith.Tracker.FileChunkRegistry fileChunkRegistry = new monolith.Tracker.FileChunkRegistry(postgresProvider);
-            monolith.Tracker.FileVersionRegistry fileVersionRegistry = new monolith.Tracker.FileVersionRegistry(postgresProvider);
+            monolith.Tracker.ChunkRegistry fileChunkRegistry = new monolith.Tracker.ChunkRegistry(postgresProvider);
+            monolith.Tracker.VersionRegistry fileVersionRegistry = new monolith.Tracker.VersionRegistry(postgresProvider);
 
             var testContainer = new monolith.Tracker.Container {
                 Name = "alt.binaries.pictures.erotica.furry",
@@ -67,7 +67,7 @@ namespace tests
             
             // Testing Chunking Saving
             const int testSizeMB = 10;
-            var testVersion = new monolith.Tracker.FileVersion {
+            var testVersion = new monolith.Tracker.Version {
                 FileId = fetchedFile.Id,
                 Date = DateTime.Now,
                 Size = 1024 * 1024 * testSizeMB, // 10 MB
@@ -81,7 +81,7 @@ namespace tests
             Assert.Equal(testVersion.Size, fetchedVersion.Size);
 
             for (int i = 0;i < testSizeMB; i++) {
-                var testChunk = new monolith.Tracker.FileChunk {
+                var testChunk = new monolith.Tracker.Chunk {
                     FileId = fetchedVersion.FileId,
                     Order = i,
                     Size = 1024 * 1024 * 1 // 1 MB

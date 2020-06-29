@@ -13,14 +13,14 @@ namespace monolith
 
         private monolith.Tracker.FileRegistry fileRegistry { get; }
         private monolith.Tracker.NodeRegistry nodeRegistry { get; }
-        private monolith.Tracker.FileVersionRegistry fileVersionRegistry { get; }
-        private monolith.Tracker.FileChunkRegistry fileChunkRegistry { get; }
+        private monolith.Tracker.VersionRegistry fileVersionRegistry { get; }
+        private monolith.Tracker.ChunkRegistry fileChunkRegistry { get; }
         
 
         public FileRegistryService(
             monolith.Tracker.FileRegistry fileRegistry,
-            monolith.Tracker.FileVersionRegistry fileVersionRegistry,
-            monolith.Tracker.FileChunkRegistry fileChunkRegistry,
+            monolith.Tracker.VersionRegistry fileVersionRegistry,
+            monolith.Tracker.ChunkRegistry fileChunkRegistry,
 
             monolith.Tracker.NodeRegistry nodeRegistry,
             ILogger<FileRegistryService> logger

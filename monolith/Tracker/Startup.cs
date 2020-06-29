@@ -33,8 +33,8 @@ namespace monolith.Tracker
             services.AddSingleton<monolith.Tracker.NodeRegistry>();
             
             services.AddSingleton<monolith.Tracker.FileRegistry>();
-            services.AddSingleton<monolith.Tracker.FileVersionRegistry>();
-            services.AddSingleton<monolith.Tracker.FileChunkRegistry>();
+            services.AddSingleton<monolith.Tracker.VersionRegistry>();
+            services.AddSingleton<monolith.Tracker.ChunkRegistry>();
 
             services.AddSingleton<monolith.Tracker.ContainerRegistry>();
 
